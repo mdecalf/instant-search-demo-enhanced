@@ -76,13 +76,12 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: search-app-ing
-  annotations:
-    ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-    - http:
+    - host: search.algolia.hire.com
+      http:
         paths:
-          - path: /search-app
+          - path: /
             pathType: Prefix
             backend:
               service:
