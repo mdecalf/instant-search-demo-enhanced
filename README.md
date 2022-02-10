@@ -2,50 +2,128 @@
 
 -----
 
-Instant-Search Demo
+Instant-Search Demo Enhanced
 ====================
 
-This is a sample project of an [Algolia](http://www.algolia.com) Instant-Search result page on an e-commerce website. Algolia is a Search API that provides a hosted full-text, numerical and faceted search.
+The same sample project but enhanced
 
-## Demos
-Try out the [demo](https://preview.algolia.com/instantsearch/)
-![Instant search](screenshots/instant-search-default.gif)
+## Features +
+* The simplest dockerfile of the world
+* A simple multiarch Makefile
+* A simple kubernetes manifest to ensure graceful handling of failures
+* A k3s cluster with
+  * Traefik Ingress
+  * Argo rollout for release
 
-### Simplified version
-This project also includes a simplified version of the implementation that includes a few less filtering options.
-The code is available in the files `index-simplified.html` and `search-simplified.js`. You can [see it live here](https://preview.algolia.com/instantsearch/index-simplified.html).
+## Prerequisites
 
-## Features
-* Full-JavaScript/frontend implementation based on [instantsearch.js](https://community.algolia.com/instantsearch.js/)
-* Results page refreshed as you type
-* Relevant results from the first keystroke
-* Rich set of filters
-  * Multi-level categories
-  * Range slider
-  * Star rating
-* Typo-tolerance
-* Multiple sort orders
-  * By Relevance
-  * By Highest Price
-  * By Lowest Price
-* Backup search parameters in the URL
+You need to have installed :
 
-## Run and develop locally
+* Docker from docker ( you need buildx if you want to build image )
+  * https://docs.docker.com/desktop/mac/install/
+  * https://docs.docker.com/engine/install/ubuntu/
+  
 
-First, [install nvm](https://github.com/creationix/nvm#installation), then run:
-
-```sh
-git clone git@github.com:algolia/instant-search-demo.git
-cd instant-search-demo
-nvm use
-npm install
-npm start
-open http://localhost:3000
+* Install Kubectl
+```shell
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
 ```
 
-We've included some credentials in the code allowing you to test the demo without any Algolia account.
+* Install Argo rollout Kubectl plugin
+```shell
+curl -LO https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64
+chmod +x ./kubectl-argo-rollouts-linux-amd64
+sudo mv ./kubectl-argo-rollouts-linux-amd64 /usr/local/bin/kubectl-argo-rollouts
+```
 
-### Data import
+* <span style="color:red"> Shoot your MDM ( or be kind with him ) because it could be a problem with port binding, among other things. </span>
+  
+  * If you can't or if you have a problem with it please run into a VM with multipass for example or contact me for providing it
+
+## Get the project (if you want to see it or build it)
+
+```sh
+git clone git@github.com:algolia/mdecalf/instant-search-demo-enhanced.git
+cd instant-search-demo-enhanced
+```
+
+## Build application (if you want or use image below)
+
+```sh
+export IMAGE=<YOUR_IMAGE_NAME>
+export TAG=<DESIRED_TAG>
+# Make sure you have done a docker login
+export DOCKER_REPO=<YOUR_DOCKER_REPO>
+
+make image
+```
+
+## Install k3d
+
+```shell
+wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
+
+k3d cluster create algolia --api-port 6443 -p "8080:80@loadbalancer" -p "8443:443@loadbalancer"
+
+```
+
+## Install argo rollout
+
+```shell
+kubectl create namespace argo-rollouts
+kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+
+```
+
+## Deploy application
+
+For the purpose of this demo one image with two tags **green** and **blue** were pushed on dockerhub [acronys/instant-search-demo-enhanced](https://hub.docker.com/repository/docker/acronys/instant-search-demo-enhanced)
+
+```shell
+kubectl create ns algolia-search
+
+kubectl -n algolia-search apply -f deployments/search-app-rollout.yml
+
+# Verify that your application is deployed with argo rollout
+kubectl argo rollouts -n algolia-search get rollout search-app-rollout --watch
+
+# OR
+# TODO for raw github
+```
+
+## Access the app
+
+You can access app through [http://127.0.0.1:8080](http://127.0.0.1:8080) or [https://127.0.0.1:8443](http://127.0.0.1:8443) on your browser
+
+It's the blue version for the purpose of this demo
+
+## Hurt the app
+
+By design our application is replicated and load balanced so you can delete a pod
+
+```shell
+# Get the pods and choose one or more
+kubectl -n algolia-search get  po
+
+# Delete a chosen pod
+kubectl -n algolia-search delete po <YOUR_VICTIM>
+
+# It will be re-created again and again
+kubectl -n algolia-search get  po 
+NAME                                  READY   STATUS              RESTARTS   AGE
+search-app-rollout-6d459b5df6-8gn69   1/1     Running             1          11h
+search-app-rollout-6d459b5df6-7wxx5   1/1     Running             1          11h
+search-app-rollout-9c56c956f-x67lp    1/1     Running             1          11h
+search-app-rollout-6d459b5df6-frvl6   1/1     Running             1          11h
+search-app-rollout-6d459b5df6-r5cn8   0/1     ContainerCreating   0          2s
+search-app-rollout-6d459b5df6-2r6c2   0/1     Terminating         0          15s
+```
+
+
+
+### On 
 If you want to replicate this demo using your own Algolia credentials that you can obtain creating a free account on Algolia.com.
 
 Just install the Ruby `algoliasearch` gem and use the `push.rb` script to send the data and automatically configure the product index (same for both versions).

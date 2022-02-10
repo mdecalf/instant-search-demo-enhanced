@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: search-app-user
+---
+# simple rollout
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: search-app-rollout
+spec:
+  replicas: 5
+  strategy:
+    canary:
+      steps:
+        - setWeight: 20
+        - pause: {}
+        - setWeight: 40
+        - pause: {duration: 30}
+        - setWeight: 60
+        - pause: {duration: 30}
+        - setWeight: 80
+        - pause: {duration: 30}
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: search-app-rollout
+  template:
+    metadata:
+      labels:
+        app: search-app-rollout
+    spec:
+      serviceAccountName: search-app-user
+      containers:
+        - name: search-app
+          image: acronys/instant-search-demo-enhanced:green
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              scheme: HTTP
+              port: 80
+            initialDelaySeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              scheme: HTTP
+              port: 80
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+          resources:
+            requests:
+              memory: 500Mi
+              cpu: 300m
+            limits:
+              memory: 500Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: search-app-svc
+  labels:
+    app: search-app
+spec:
+  type: ClusterIP
+  ports:
+    # the port that this service should serve on
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: search-app-rollout
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: search-app-ing
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: search-app-svc
+                port:
+                  number: 80
