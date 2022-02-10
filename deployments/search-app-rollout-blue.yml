@@ -33,7 +33,7 @@ spec:
       serviceAccountName: search-app-user
       containers:
         - name: search-app
-          image: acronys/instant-search-demo-enhanced:green
+          image: acronys/instant-search-demo-enhanced:blue
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 3
@@ -76,16 +76,15 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: search-app-ing
-  annotations:
-    ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-    - http:
+    - host: search.algolia.hire.com
+      http:
         paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: search-app-svc
-                port:
-                  number: 80
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: search-app-svc
+              port:
+                number: 80
