@@ -1,9 +1,5 @@
 .PHONY: start
 
-IMAGE= instant-search-demo-enhanced
-TAG= green
-DOCKER_REPO= acronys
-
 dependency:
 	npm install
 
