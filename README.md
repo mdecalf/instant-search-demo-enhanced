@@ -10,7 +10,7 @@ The same sample project but enhanced
 ## Features +
 * The simplest dockerfile of the world
 * A simple multiarch Makefile
-* A simple kubernetes manifest to ensure graceful handling of failures
+* A simple ArgoCD & Rollout deployment to ensure graceful handling of failures
 * A k3s cluster with
   * Traefik Ingress
   * ArgoCD & Argo rollout for deployment and release
