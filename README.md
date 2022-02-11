@@ -11,7 +11,7 @@ The same sample project but enhanced
 * The simplest dockerfile of the world
 * A simple multiarch Makefile
 * A simple ArgoCD & Rollout deployment to ensure graceful handling of failures
-* A k3s cluster with
+* A k3d cluster with
   * Traefik Ingress
   * ArgoCD & Argo rollout for deployment and release
 
