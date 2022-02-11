@@ -32,19 +32,10 @@ sudo curl -sSL -o /usr/local/bin/kubectl "https://dl.k8s.io/release/$(curl -L -s
 sudo chmod +x /usr/local/bin/kubectl
 ```
 
-On mac M1
+On Mac
 ```shell
-sudo curl -sSL -o /usr/local/bin/kubectl "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/darwin/arm64/kubectl"
-sudo chmod +x /usr/local/bin/kubectl
-```
-
-On mac Intel
-```shell
-sudo curl -sSL -o /usr/local/bin/kubectl "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/darwin/amd64/kubectl"
-sudo chmod +x /usr/local/bin/kubectl
-```
-
 brew install kubectl
+```
 
 * Install Argo rollout Kubectl plugin
 
