@@ -346,5 +346,6 @@ Remove entry in your /etc/hosts
 
 * Use CI tools like gitlab CI or github action instead of Readme
 * Use separate git repo for deployment with kustomize
+* Use a real strategy for Canary release based on traffic management with Istio integration for example
 * Use git commit/branch instead of patching ArgoCD project based on git release
 * Add a real cert for ingress
