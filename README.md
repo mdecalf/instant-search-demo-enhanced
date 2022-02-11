@@ -333,7 +333,7 @@ kubectl argo rollouts -n algolia-search undo search-app-rollout --to-revision=1
 Cause I'm nice, find below the uninstall command of our demo
 
 ```shell
-k3d cluster delete multinode algolia
+k3d cluster delete algolia
 
 sudo rm -rf /usr/local/bin/argocd
 sudo rm -rf /usr/local/bin/kubectl
