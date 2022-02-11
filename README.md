@@ -299,7 +299,7 @@ NAME                                            KIND        STATUS     AGE  INFO
 └──□ search-app-rollout-6d459b5df6-vlbdb  Pod         ✔ Running  67s  ready:1/1
 ```
 
-Now if you on your browser on the app tab do ```CTRL+F5``` or ```⌘ + Maj + R``` on mac ( important because I only change css color ...)
+Now go on your browser on the app tab and do ```CTRL+F5``` or ```⌘ + Maj + R``` on mac ( important because I only change css color ...)
 
 As you can see every 5 reload you got the green release. It corresponds at 20% of pods that is the first step of our rollout release
 
