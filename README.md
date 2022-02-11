@@ -25,21 +25,51 @@ You need to have installed :
   
 
 * Install Kubectl
+
+On linux
 ```shell
 sudo curl -sSL -o /usr/local/bin/kubectl "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 sudo chmod +x /usr/local/bin/kubectl
 ```
 
+On mac M1
+```shell
+sudo curl -sSL -o /usr/local/bin/kubectl "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/darwin/arm64/kubectl"
+sudo chmod +x /usr/local/bin/kubectl
+```
+
+On mac Intel
+```shell
+sudo curl -sSL -o /usr/local/bin/kubectl "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/darwin/amd64/kubectl"
+sudo chmod +x /usr/local/bin/kubectl
+```
+
+brew install kubectl
+
 * Install Argo rollout Kubectl plugin
+
+On Linux
 ```shell
 sudo curl -sSL -o /usr/local/bin/kubectl-argo-rollouts https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64
 sudo chmod +x /usr/local/bin/kubectl-argo-rollouts 
 ```
 
+On Mac
+````shell
+brew install argoproj/tap/kubectl-argo-rollouts
+````
+
 * Install ArgoCD cli
+
+On Linux
 ```shell
 sudo curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
 sudo chmod +x /usr/local/bin/argocd
+```
+
+On Mac
+```shell
+brew install argocd
 ```
 
 * Add entry for demo purpose to your ```/etc/hosts```
@@ -53,10 +83,13 @@ echo  "127.0.0.1 cd.algolia.hire.com" | sudo tee -a /etc/hosts
   
   * If you can't or if you have a problem with it please run into a VM with multipass for example or contact me for providing it
 
+
+* If you use Docker Desktop be sure that you disable kubernetes and restart it
+
 ## Get the project (if you want to see it or build it)
 
 ```sh
-git clone git@github.com:algolia/mdecalf/instant-search-demo-enhanced.git
+git clone git clone git@github.com:mdecalf/instant-search-demo-enhanced.git
 cd instant-search-demo-enhanced
 ```
 
@@ -73,11 +106,24 @@ make image
 
 ## Install k3d
 
+On Linux
 ```shell
 sudo curl -sSL -o /usr/local/bin/k3d https://github.com/rancher/k3d/releases/download/v5.3.0/k3d-linux-amd64
+```
 
-k3d cluster create algolia --api-port 6443 -p "8080:80@loadbalancer" -p "8443:443@loadbalancer" --image rancher/k3s:v1.21.9-k3s1
+On Mac M1
+````shell
+sudo curl -sSL -o /usr/local/bin/k3d https://github.com/rancher/k3d/releases/download/v5.3.0/k3d-darwin-arm64
+````
 
+On Mac Linux
+```shell
+sudo curl -sSL -o /usr/local/bin/k3d https://github.com/rancher/k3d/releases/download/v5.3.0/k3d-darwin-amd64
+```
+
+## Launch k3d cluster
+```shell
+k3d cluster create algolia --agents 2 --servers 1 --api-port 6443 -p "8080:80@loadbalancer" -p "8443:443@loadbalancer" --image rancher/k3s:v1.21.9-k3s1
 ```
 
 ## Install argocd and argo rollout
